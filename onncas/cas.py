@@ -21,7 +21,13 @@ class Cas:
         self.cas_url = f'{get_cas_url}/{api_version}'
         self.logger.entry('info', f'Using CAS URL: {get_cas_url}')
         self.logger.entry('info', 'Obtaining CAS API key')
-        cas_key = os.environ['CAS_KEY']
+        cas_key = os.environ.get('CAS_KEY')
+
+        if not cas_key:
+            msg = '"CAS_KEY" environment variable must be specified'
+            self.logger.entry('critical', msg)
+            sys.exit(1)
+
         self.header = {'Authorization': 'Bearer ' + cas_key}
 
     def _api_call(self, url, params='None', required_params=None, api_verb='get'):
